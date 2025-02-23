@@ -1,7 +1,6 @@
 "use client";
-
-import RootContext from "@/contexts/RootContext";
+import { SidebarProvider } from "../ui/sidebar";
 
 export default function RootProvider({ children }) {
-  return <RootContext>{children}</RootContext>;
+  return <SidebarProvider>{children}</SidebarProvider>;
 }
