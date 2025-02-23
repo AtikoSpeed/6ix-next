@@ -1,5 +1,5 @@
-export default function CategoryPage({ params }) {
-  const { category } = params;
+export default async function CategoryPage({ params }) {
+  const { category } = await params;
   return (
     <div>
       <h1 className="text-2xl font-bold">{category}</h1>
@@ -8,6 +8,6 @@ export default function CategoryPage({ params }) {
   );
 }
 
-export function generateStaticParams() {
-  return [{ category: "menswear" }, { category: "womenswear" }];
-}
+// export function generateStaticParams() {
+// return [{ category: "menswear" }, { category: "womenswear" }];
+// }
