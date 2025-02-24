@@ -23,7 +23,7 @@ export default function ThemeToggle() {
   };
 
   return (
-    <label className="flex cursor-pointer gap-2">
+    <label className="flex cursor-pointer gap-2 px-2">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"

@@ -1,15 +1,15 @@
 import Image from "next/image";
 export default function Navbar({ props }) {
   return (
-    <nav className="navbar bg-base-100 sticky w-[calc(100vw-12rem)] z-10">
+    <nav className="navbar bg-base-100 sticky w-[calc(100vw-13rem)] z-10">
       <div className="flex-1">
         <a className="btn btn-ghost text-xl">{props.category}</a>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-4">
         <input
           type="text"
           placeholder="Search"
-          className="input input-bordered w-24 md:w-auto"
+          className="input input-bordered w-24 md:w-80 h-6 self-center text-center rounded-sm"
         />
         <div className="dropdown dropdown-end">
           <div
