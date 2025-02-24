@@ -10,7 +10,7 @@ export default function Sidebar({ children }) {
           htmlFor="my-drawer"
           className="btn btn-primary drawer-button lg:hidden fixed top-4 left-4 z-50"
         >
-          Open drawer
+          ll
         </label>
       </div>
       <div className="drawer-side z-40">
