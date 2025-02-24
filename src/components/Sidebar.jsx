@@ -2,16 +2,24 @@ import Image from "next/image";
 
 export default function Sidebar({ children }) {
   return (
-    <aside className="drawer drawer-open sticky w-52">
+    <aside className="drawer lg:drawer-open">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content">{children}</div>
-      <div className="drawer-side min-w-52">
+      <div className="drawer-content flex flex-col">
+        {children}
+        <label
+          htmlFor="my-drawer"
+          className="btn btn-primary drawer-button lg:hidden fixed top-4 left-4 z-50"
+        >
+          Open drawer
+        </label>
+      </div>
+      <div className="drawer-side z-40">
         <label
           htmlFor="my-drawer"
           aria-label="close sidebar"
           className="drawer-overlay"
         />
-        <ul className="menu bg-base text-base-content min-h-full min-w-full p-4 gap-2">
+        <ul className="menu bg-base text-base-content min-h-full w-52 p-4 gap-2">
           <Image
             className="w-full h-full object-contain mb-4"
             src="/logo.svg"
