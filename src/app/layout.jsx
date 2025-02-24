@@ -4,7 +4,7 @@ import "@/styles/Layout.sass";
 
 const robotoSans = Roboto({
   variable: "--font-roboto-sans",
-  weight: ["400"],
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
 });
 

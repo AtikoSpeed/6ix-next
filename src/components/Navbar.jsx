@@ -3,7 +3,7 @@ export default function Navbar({ props }) {
   return (
     <nav className="navbar bg-base-100 sticky w-[calc(100vw-13rem)] z-10">
       <div className="flex-1">
-        <a className="btn btn-ghost text-xl">{props.category}</a>
+        <a className="text-3xl font-semibold">{props.page}</a>
       </div>
       <div className="flex gap-4">
         <input

@@ -1,11 +1,6 @@
 export default async function CategoryPage({ params }) {
-  const { category } = await params;
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">{category}</h1>
-      {category}
-    </div>
-  );
+  const { page } = await params;
+  return <div>{page}</div>;
 }
 
 // export function generateStaticParams() {
