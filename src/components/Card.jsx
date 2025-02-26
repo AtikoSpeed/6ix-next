@@ -1,15 +1,26 @@
-export default function Card() {
+import Image from "next/image";
+
+export default function Card({ props }) {
   return (
-    <div className="card bg-base-100 shadow-xl">
-      <figure>
-        <img src="/photo-1606107557195-0e29a4b5b4aa.webp" alt="Shoes" />
+    <div className="card grid grid-cols-1 bg-base-100 shadow-xl h-full">
+      <figure className="relative self-start">
+        <Image
+          src={`https://strapi.6ixarchive.com${props.itemPic[0].url}`}
+          alt="Shoes"
+          width={100}
+          height={100}
+          sizes="50vw"
+          className="w-full h-auto"
+        />
       </figure>
-      <div className="card-body">
-        <h2 className="card-title">Shoes!</h2>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
-        <div className="card-actions justify-end">
-          <button className="btn btn-primary">Buy Now</button>
-        </div>
+      <div className="card-body self-end">
+        <h2 className="card-title">{props.brand}</h2>
+        {props.seasonyear && <p>{props.seasonyear}</p>}
+        <p>{props.itemName}</p>
+        <p>{`€${props.itemPrice}`}</p>
+        {/* <div className="card-actions justify-end"> */}
+        {/* <button className="btn btn-primary">Buy Now</button> */}
+        {/* </div> */}
       </div>
     </div>
   );
