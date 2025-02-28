@@ -1,14 +1,16 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
 @plugin "daisyui" {
-  themes: lofi --default /* , black --prefersdark */;
+  themes: garden --default /* , black --prefersdark */;
 }
 @plugin "daisyui/theme" {
-  name: "lofi";
+  name: "garden";
   default: true;
   prefersdark: false;
   color-scheme: "light";
   --radius-selector: 0rem;
   --radius-field: 0rem;
   --radius-box: 0rem;
+  --color-base-100: #ececec;
+  /* --color-primary: #000000; */
 }
