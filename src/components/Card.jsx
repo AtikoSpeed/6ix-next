@@ -9,7 +9,7 @@ export default function Card({ props }) {
           alt="Clothing item"
           width={100}
           height={100}
-          sizes="80vw"
+          sizes="80vh"
           className="w-full h-auto"
         />
       </figure>
