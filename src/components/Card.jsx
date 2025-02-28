@@ -5,11 +5,11 @@ export default function Card({ props }) {
     <div className="card grid grid-cols-1 bg-base-100 shadow-xl h-full">
       <figure className="relative self-start">
         <Image
-          src={`https://strapi.6ixarchive.com${props.itemPic[0].url}`}
+          src={`https://strapi.6ixarchive.com${props.itemPic[0]?.url}`}
           alt="Shoes"
           width={100}
           height={100}
-          sizes="50vw"
+          sizes="80vw"
           className="w-full h-auto"
         />
       </figure>
