@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Card({ props }) {
   return (
-    <div className="card grid grid-cols-1 bg-base-100 shadow-xl h-full">
+    <div className="card grid grid-cols-1 bg-base-100 shadow-xl h-min lg:h-full">
       <figure className="relative self-start">
         <Image
           src={`https://strapi.6ixarchive.com${props.itemPic[0]?.url}`}
