@@ -6,7 +6,7 @@ export default function Card({ props }) {
       <figure className="relative self-start">
         <Image
           src={`https://strapi.6ixarchive.com${props.itemPic[0]?.url}`}
-          alt="Shoes"
+          alt="Clothing item"
           width={100}
           height={100}
           sizes="80vw"
