@@ -31,7 +31,7 @@ export default async function CategoryPage({ params }) {
     const items = response.data || [];
 
     return (
-      <div className="container h-[calc(100vh-7.5rem)] max-w-screen grid sm:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] auto-rows-min gap-4 overflow-auto overflow-x-hidden p-2 pt-0 sm:p-4">
+      <div className="container h-[calc(100vh-7.5rem)] max-w-screen grid lg:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] xl:grid-cols-[repeat(auto-fit,minmax(20rem,25rem))] auto-rows-min gap-4 overflow-auto overflow-x-hidden p-2 pt-0 sm:p-4">
         {items.map((item) => (
           <Link key={item.documentId} href={`/${page}/item/${item.documentId}`}>
             <Card key={item.documentId} props={item} />
