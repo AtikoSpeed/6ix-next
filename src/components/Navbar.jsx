@@ -1,9 +1,9 @@
 import Image from "next/image";
 export default function Navbar({ props }) {
   return (
-    <nav className="navbar bg-base-100 sticky lg:w-[calc(100vw-13rem)] z-10 p-4">
+    <nav className="navbar bg-base-100 sticky lg:w-[calc(100vw-13rem)] z-10 p-2 pt-0 sm:p-4">
       <div className="flex-1">
-        <a className="text-xl max-w-min lg:text-3xl font-semibold ms-13 lg:ms-0">
+        <a className="text-xl max-w-min md:text-3xl font-semibold ms-13 md:ms-0 align-text-bottom">
           {props.page}
         </a>
       </div>
