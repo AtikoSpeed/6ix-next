@@ -26,13 +26,12 @@ export default async function CategoryPage({ params }) {
 
   if (page === "menswear" || page === "womenswear") {
     const response = await getPageData(page);
-    console.log(response.data[0].itemPic[0].formats.large);
 
     // Access the data array from the response
     const items = response.data || [];
 
     return (
-      <div className="container h-[calc(100vh-8rem)] max-w-screen grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] auto-rows-min gap-4 overflow-auto overflow-x-hidden p-2 pt-0 sm:p-4">
+      <div className="container h-[calc(100vh-8rem)] max-w-screen grid sm:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] auto-rows-min gap-4 overflow-auto overflow-x-hidden p-2 pt-0 sm:p-4">
         {items.map((item) => (
           <Link key={item.documentId} href={`/${page}/item/${item.documentId}`}>
             <Card key={item.documentId} props={item} />
