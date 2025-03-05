@@ -8,8 +8,8 @@ type Props = {
   params: any[];
 };
 
-const IndexPage: NextPage<Props> = async ({ params }) => {
-  const countries = await params;
+const IndexPage: NextPage<Props> = async () => {
+  const countries = await sanityApi.getAllCountries();
   console.log(countries);
   return (
     <>
@@ -28,16 +28,6 @@ const IndexPage: NextPage<Props> = async ({ params }) => {
       <br />
     </>
   );
-};
-
-export const generateStaticParams: GetServerSideProps = async () => {
-  const countries = await sanityApi.getAllCountries();
-  return {
-    props: {
-      countries,
-    },
-    revalidate: false,
-  };
 };
 
 export default IndexPage;
