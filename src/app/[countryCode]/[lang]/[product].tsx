@@ -3,13 +3,17 @@ import React, { useState, useEffect } from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Price, PricesContainer, AddToCartButton } from "@commercelayer/react-components";
-import { useGetToken } from "@hooks/GetToken";
-import locale from "@locale/index";
-import Page from "@components/Page";
-import { Product, Country } from "@typings/models";
-import { parseImg, parseLanguageCode } from "@utils/parser";
-import sanityApi from "@utils/sanity/api";
+import {
+  Price,
+  PricesContainer,
+  AddToCartButton,
+} from "@commercelayer/react-components";
+import { useGetToken } from "@/hooks/GetToken";
+import locale from "@/locale/index";
+import Page from "@/components/EXPage";
+import { Product, Country } from "@/typings/models";
+import { parseImg, parseLanguageCode } from "@/utils/parser";
+import sanityApi from "@/utils/sanity/api";
 
 type Props = {
   lang: string;
@@ -19,13 +23,19 @@ type Props = {
   buildLanguages?: Country[];
 };
 
-const ProductPage: React.FC<Props> = ({ lang, country, countries, buildLanguages, product }) => {
+const ProductPage: React.FC<Props> = ({
+  lang,
+  country,
+  countries,
+  buildLanguages,
+  product,
+}) => {
   const countryCode = country?.code.toLowerCase() as string;
   const clMarketId = country?.marketId as string;
   const clEndpoint = process.env.NEXT_PUBLIC_CL_ENDPOINT as string;
   const clToken = useGetToken({
     scope: clMarketId,
-    countryCode: countryCode
+    countryCode: countryCode,
   });
   const languageCode = parseLanguageCode(lang, "toLowerCase", true);
 
@@ -37,8 +47,8 @@ const ProductPage: React.FC<Props> = ({ lang, country, countries, buildLanguages
       code: variant.code,
       lineItem: {
         name: product.name,
-        imageUrl: _.first(variant.images)?.url
-      }
+        imageUrl: _.first(variant.images)?.url,
+      },
     };
   });
 
@@ -65,8 +75,8 @@ const ProductPage: React.FC<Props> = ({ lang, country, countries, buildLanguages
             pathname: "/[countryCode]/[lang]",
             query: {
               countryCode,
-              lang
-            }
+              lang,
+            },
           }}
         >
           <Image
@@ -94,19 +104,27 @@ const ProductPage: React.FC<Props> = ({ lang, country, countries, buildLanguages
             />
           </div>
           <div className="w-full">
-            <h2 className="text-sm title-font text-gray-500 tracking-widest">BRAND</h2>
-            <p className="text-gray-900 text-3xl title-font font-medium my-3">{product.name}</p>
-            <p className="text-gray-600 text-xl title-font font-medium my-3">{selectedVariant}</p>
+            <h2 className="text-sm title-font text-gray-500 tracking-widest">
+              BRAND
+            </h2>
+            <p className="text-gray-900 text-3xl title-font font-medium my-3">
+              {product.name}
+            </p>
+            <p className="text-gray-600 text-xl title-font font-medium my-3">
+              {selectedVariant}
+            </p>
             <p className="leading-relaxed">{product.description}</p>
             <div className="flex items-center border-b-2 border-gray-200 py-5">
               <div className="flex items-center">
                 <div className="relative" data-children-count="1">
                   <select
-                    placeholder={locale[lang].selectSize as string}
                     className="rounded border appearance-none border-gray-400 py-2 focus:outline-none focus:border-blue-500 text-base pl-3 pr-10"
                     value={selectedVariant}
                     onChange={(e) => setSelectedVariant(e.target.value)}
                   >
+                    <option value="" disabled>
+                      {locale[lang].selectSize as string}
+                    </option>
                     {variantOptions?.map((option) => (
                       <option key={option.code} value={option.code}>
                         {option.label}
@@ -155,7 +173,7 @@ const ProductPage: React.FC<Props> = ({ lang, country, countries, buildLanguages
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     paths: [],
-    fallback: true
+    fallback: true,
   };
 };
 
@@ -164,11 +182,15 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const slug = params?.product;
   const countryCode = params?.countryCode as string;
   const countries = await sanityApi.getAllCountries(lang);
-  const country = countries.find((country: Country) => country.code.toLowerCase() === countryCode);
+  const country = countries.find(
+    (country: Country) => country.code.toLowerCase() === countryCode
+  );
   const product = await sanityApi.getProduct(slug, lang);
   const buildLanguages = _.compact(
     process.env.BUILD_LANGUAGES?.split(",").map((l) => {
-      const country = countries.find((country: Country) => country.code === parseLanguageCode(l));
+      const country = countries.find(
+        (country: Country) => country.code === parseLanguageCode(l)
+      );
       return !_.isEmpty(country) ? country : null;
     })
   );
@@ -179,9 +201,9 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
       countries,
       country,
       product,
-      buildLanguages
+      buildLanguages,
     },
-    revalidate: 60
+    revalidate: 60,
   };
 };
 
