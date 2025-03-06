@@ -2,7 +2,6 @@ import Card from "@/components/Card";
 import Link from "next/link";
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
-// import { urlFor } from "@/sanity/lib/image";
 
 async function getPageData(page) {
   // Query for Sanity instead of Strapi
