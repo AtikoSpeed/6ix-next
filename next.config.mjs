@@ -4,9 +4,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        // eslint-disable-next-line no-undef
-        hostname: `${process.env.STRAPI_URL}`,
-        pathname: "/uploads/**",
+        hostname: "cdn.sanity.io",
+        pathname: "/images/**",
       },
     ],
   },
