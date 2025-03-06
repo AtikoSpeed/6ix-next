@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 export default function Card({ props }) {
-  console.log(props);
   return (
     <div className="card grid grid-cols-1 bg-base-100 shadow-xl h-min lg:h-full">
       <figure className="relative self-start">
