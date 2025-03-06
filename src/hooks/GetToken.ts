@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
-import { authentication } from "@commercelayer/js-auth";
-import { parseEndpoint } from "@utils/parser";
+import { authenticate } from "@commercelayer/js-auth";
+import { parseEndpoint } from "@/utils/parser";
 
 const clEndpoint = process.env.NEXT_PUBLIC_CL_ENDPOINT as string;
 const clientId = process.env.NEXT_PUBLIC_CL_CLIENT_ID as string;
@@ -15,17 +15,22 @@ export const useGetToken: UseGetToken = ({ scope, countryCode }) => {
   const [token, setToken] = useState("");
   useEffect(() => {
     const getCookieToken = Cookies.get(`clAccessToken-${countryCode}`);
-    if ((!getCookieToken || getCookieToken === "undefined") && clientId && slug && scope) {
+    if (
+      (!getCookieToken || getCookieToken === "undefined") &&
+      clientId &&
+      slug &&
+      scope
+    ) {
       const getToken = async () => {
-        const auth = await authentication("client_credentials", {
+        const auth = await authenticate("client_credentials", {
           clientId,
-          slug,
-          scope: `market:${scope}`
+          domain: slug,
+          scope: `market:${scope}`,
         });
         setToken(auth?.accessToken);
         Cookies.set(`clAccessToken-${countryCode}`, auth?.accessToken, {
           // @ts-ignore
-          expires: auth?.expires
+          expires: auth?.expires,
         });
       };
       getToken();
