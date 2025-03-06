@@ -1,4 +1,11 @@
-import { Country, Product, Size, Taxon, Taxonomy, Variant } from "@typings/models";
+import {
+  Country,
+  Product,
+  Size,
+  Taxon,
+  Taxonomy,
+  Variant,
+} from "@/typings/models";
 
 export interface SanityCountry extends Omit<Country, "name"> {
   name: Record<string, string>;
@@ -16,7 +23,8 @@ export interface SanityTaxon extends Omit<Taxon, "name" | "products"> {
   products: SanityProduct[];
 }
 
-export interface SanityProduct extends Omit<Product, "name" | "description" | "slug" | "variants"> {
+export interface SanityProduct
+  extends Omit<Product, "name" | "description" | "slug" | "variants"> {
   name: Record<string, string>;
   description: Record<string, string>;
   slug: Record<string, any>;

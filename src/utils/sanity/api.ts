@@ -26,6 +26,9 @@ const parsingVariant = (
         const localization = {
           name: variant?.name?.[lang] || "",
           size: { name: variant?.size?.name?.[lang] || "" },
+          code: variant?.code || "",
+          description: variant?.description || "",
+          images: variant?.images || [],
         };
         return { ...variant, ...localization };
       })
@@ -36,7 +39,7 @@ const parsingProduct = (
   products: SanityProduct[] | SanityProduct,
   lang = "en_us"
 ): Product[] | Product => {
-  return _.isArray(products)
+  return Array.isArray(products)
     ? products.map((product) => {
         const localization = {
           name: product?.name[lang],
@@ -47,11 +50,14 @@ const parsingProduct = (
         return { ...product, ...localization };
       })
     : {
-        ...products,
-        name: products?.name[lang],
-        slug: products?.slug["en_us"].current,
-        description: products?.description[lang],
-        variants: parsingVariant(products?.variants, lang) as Variant[],
+        ...(products as SanityProduct),
+        name: (products as SanityProduct)?.name[lang],
+        slug: (products as SanityProduct)?.slug["en_us"].current,
+        description: (products as SanityProduct)?.description[lang],
+        variants: parsingVariant(
+          (products as SanityProduct)?.variants,
+          lang
+        ) as Variant[],
       };
 };
 
