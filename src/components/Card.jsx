@@ -1,7 +1,9 @@
+"use server";
+
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Card({ props, category }) {
+export default async function Card({ props, category }) {
   if (!props) return null;
 
   // Extract product information from your specific Sanity schema structure

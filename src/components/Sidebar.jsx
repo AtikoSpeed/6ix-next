@@ -1,6 +1,8 @@
+"use server";
+
 import Image from "next/image";
 
-export default function Sidebar({ children }) {
+export default async function Sidebar({ children }) {
   return (
     <aside className="drawer md:drawer-open">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />

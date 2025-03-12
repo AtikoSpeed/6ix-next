@@ -1,3 +1,5 @@
+"use server";
+
 import Card from "@/components/Card";
 import { getProductsByCategory } from "@/utils/sanity/api.ts";
 
@@ -41,6 +43,6 @@ export default async function CategoryPage({ params }) {
   return null;
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return [{ page: "menswear" }, { page: "womenswear" }];
 }

@@ -1,3 +1,5 @@
+"use server";
+
 import { getProductBySlug } from '@/utils/sanity/api.ts';
 import ProductDetail from '@/components/commercelayer/ProductDetail';
 import Link from 'next/link';
