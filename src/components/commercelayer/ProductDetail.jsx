@@ -1,121 +1,125 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
   AddToCartButton,
-  AvailabilityContainer,
-  PricesContainer,
-  Price,
-  VariantSelector,
-  VariantsContainer,
+  LineItemsContainer,
+  LineItemsCount,
+  OrderContainer
 } from '@commercelayer/react-components';
 import CLProvider from './CommerceLayerProvider';
+import ProductPrice from './ProductPrice';
+import { formatSkuWithSize } from '@/utils/commercelayer/product-utils';
 
 export default function ProductDetail({ product }) {
-  const [selectedImage, setSelectedImage] = useState(
-    product.images && product.images.length > 0 ? product.images[0].url : '/placeholder.jpg'
-  );
+  // State to store the SKU code and size
+  const [skuCode, setSkuCode] = useState('');
+  const [selectedSize, setSelectedSize] = useState('One Size');
+  
+  useEffect(() => {
+    if (product) {
+      const code = product.attributes?.sku || product.attributes?.code || product.documentId || 'DEMO_SKU';
+      setSkuCode(code);
+      console.log('Using SKU code for Commerce Layer:', code);
+    }
+  }, [product]);
   
   if (!product) return null;
   
-  const { name, description, images = [], variants = [] } = product;
+  // Extract product data from the structure
+  const productData = product.attributes || {};
+  const name = productData.name || 'Product';
+  const description = productData.description || '';
+  const imageUrl = productData.itemPic?.data?.attributes?.url || '/placeholder.jpg';
   
-  // Get the first variant code to use as default
-  const firstCode = variants.length > 0 ? variants[0].code : null;
-
+  // Define available sizes based on product type (simplified for now)
+  const availableSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'];
+  
+  // Handle size selection
+  const handleSizeChange = (e) => {
+    setSelectedSize(e.target.value);
+  };
+  
+  // Get the formatted SKU code with size suffix for Commerce Layer
+  const formattedSkuCode = formatSkuWithSize(skuCode, selectedSize !== 'One Size' ? selectedSize : null);
+  
   return (
     <CLProvider>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {/* Product Images */}
-        <div>
-          <div className="aspect-square relative overflow-hidden rounded-lg mb-4">
-            <Image 
-              src={selectedImage} 
-              alt={name} 
-              fill 
-              className="object-cover" 
-              priority 
-            />
-          </div>
-          
-          {/* Thumbnail gallery */}
-          {images.length > 1 && (
-            <div className="flex space-x-4 mt-4 overflow-x-auto">
-              {images.map((image, index) => (
-                <div 
-                  key={index} 
-                  className={`cursor-pointer h-24 w-24 relative rounded border-2 ${selectedImage === image.url ? 'border-primary' : 'border-gray-200'}`}
-                  onClick={() => setSelectedImage(image.url)}
-                >
-                  <Image 
-                    src={image.url} 
-                    alt={`${name} - image ${index + 1}`} 
-                    fill
-                    className="object-cover" 
-                  />
-                </div>
-              ))}
+      <OrderContainer>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* Product Image */}
+          <div>
+            <div className="aspect-square relative overflow-hidden rounded-lg mb-4">
+              <Image 
+                src={imageUrl} 
+                alt={name} 
+                fill 
+                className="object-cover" 
+                priority 
+              />
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Product Info */}
-        <div>
-          <h1 className="text-3xl font-bold mb-4">{name}</h1>
-          
-          {/* Price */}
-          {firstCode && (
+          {/* Product Info */}
+          <div>
+            <h1 className="text-3xl font-bold mb-4">{name}</h1>
+            
+            {/* Price - Using Commerce Layer Price component */}
             <div className="mb-6">
-              <PricesContainer skuCode={firstCode}>
-                <Price 
-                  className="text-2xl font-bold text-primary" 
-                  compareClassName="text-lg text-gray-500 line-through ml-2" 
-                />
-              </PricesContainer>
+              <ProductPrice 
+                skuCode={skuCode} 
+                size={selectedSize !== 'One Size' ? selectedSize : null} 
+              />
             </div>
-          )}
-          
-          {/* Description */}
-          <div className="mb-8">
-            <h2 className="text-lg font-medium mb-2">Description</h2>
-            <p className="text-gray-600">{description}</p>
-          </div>
-          
-          {/* Variants */}
-          {variants.length > 0 && (
+            
+            {/* Size selector */}
+            <div className="mb-6">
+              <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
+                Size
+              </label>
+              <select
+                id="size"
+                name="size"
+                value={selectedSize}
+                onChange={handleSizeChange}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              >
+                {availableSizes.map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {/* Description */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium mb-4">Variants</h2>
-              <VariantsContainer>
-                <VariantSelector 
-                  options={variants.map(v => ({ 
-                    label: v.name || v.size || v.code, 
-                    code: v.code,
-                    lineItem: {
-                      name: product.name,
-                      imageUrl: selectedImage
-                    }
-                  }))}
-                  className="w-full p-2 border rounded mb-4"
-                  placeholder="Select a variant"
-                />
-              </VariantsContainer>
+              <h2 className="text-lg font-medium mb-2">Description</h2>
+              <p className="text-gray-600">{description}</p>
             </div>
-          )}
-          
-          {/* Availability & Add to Cart */}
-          {firstCode && (
-            <div>
-              <AvailabilityContainer skuCode={firstCode}>
-                <AddToCartButton 
-                  className="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg w-full transition duration-300"
-                  label="Add to Cart" 
-                />
-              </AvailabilityContainer>
+            
+            {/* Add to Cart Button - Now using the formatted SKU code with size */}
+            <div className="mt-6">
+              <AddToCartButton 
+                skuCode={formattedSkuCode}
+                className="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg w-full transition duration-300"
+                label="Add to Cart" 
+              />
             </div>
-          )}
+            
+            {/* Cart Summary */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <LineItemsContainer>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Cart Items:</span>
+                  <LineItemsCount className="text-sm font-bold bg-primary text-white px-2 py-1 rounded-full" />
+                </div>
+              </LineItemsContainer>
+            </div>
+          </div>
         </div>
-      </div>
+      </OrderContainer>
     </CLProvider>
   );
 }
