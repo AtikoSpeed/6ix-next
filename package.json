@@ -11,6 +11,7 @@
   "dependencies": {
     "@commercelayer/js-auth": "^6.7.1",
     "@commercelayer/react-components": "^4.20.0",
+    "@commercelayer/sanity-plugin-commerce": "^1.0.0",
     "@iframe-resizer/react": "^5.3.3",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.78.0",
