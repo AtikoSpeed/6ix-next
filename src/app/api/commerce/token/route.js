@@ -5,8 +5,17 @@ import { getServerAccessToken } from '@/utils/commercelayer/server-auth';
  * Used to avoid exposing credentials in client-side code
  */
 export async function GET() {
+  console.log('Token API route called');
+  
   try {
+    console.log('Attempting to get server access token...');
+    
     const accessToken = await getServerAccessToken();
+    console.log('Token received:', accessToken ? 'Token successfully received' : 'NULL');
+    
+    if (!accessToken) {
+      throw new Error('No access token received from server');
+    }
     
     return Response.json({
       accessToken,
@@ -17,7 +26,7 @@ export async function GET() {
     
     return Response.json(
       { 
-        error: 'Failed to get access token', 
+        error: error.message || 'Failed to get access token', 
         success: false 
       },
       { status: 500 }
