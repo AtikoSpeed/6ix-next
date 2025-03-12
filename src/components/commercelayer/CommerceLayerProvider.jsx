@@ -4,6 +4,13 @@ import { CommerceLayer } from '@commercelayer/react-components';
 import { useEffect, useState } from 'react';
 import { getAccessToken, storeAccessToken } from '@/utils/commercelayer/auth';
 
+/**
+ * Client component for Commerce Layer integration.
+ * Must be a client component because:
+ * - It uses React hooks (useState, useEffect)
+ * - It accesses browser APIs (fetch, cookies via auth utilities)
+ * - It renders the CommerceLayer component which requires client-side JavaScript
+ */
 export default function CLProvider({ children }) {
   const [token, setToken] = useState('');
   const [loading, setLoading] = useState(true);
@@ -68,9 +75,10 @@ export default function CLProvider({ children }) {
     );
   }
 
-  // Use default endpoint if not defined in env
-  const endpoint = typeof window !== 'undefined' && 
-    window.ENV?.NEXT_PUBLIC_CL_ENDPOINT || 'https://6ixarchive.commercelayer.io';
+  // Use environment variable for endpoint
+  
+  // eslint-disable-next-line no-undef
+  const endpoint = process.env.NEXT_PUBLIC_CL_ENDPOINT || 'https://6ixarchive.commercelayer.io';
   
   return (
     <CommerceLayer
