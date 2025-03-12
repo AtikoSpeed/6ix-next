@@ -1,82 +1,20 @@
 import { createClient, groq } from "next-sanity";
 import _ from "lodash";
 import { Product, Taxon, Taxonomy, Variant, Image, Size, Country, Catalog } from "@/typings/models";
+import { 
+  LocalizedField,
+  SanityCountry, 
+  SanityImage, 
+  SanityProduct, 
+  SanityTaxon, 
+  SanityTaxonomy,
+  SanityVariant 
+} from "@/typings/sanity";
 import { client } from "./client";
 import { parseLocale } from "@/utils/parser";
 
-// Improved type for localized content
-type LocalizedField = string | {
-  [locale: string]: string;
-};
-
-interface SanityImage {
-  url?: string;
-  asset?: {
-    url?: string;
-  };
-}
-
-interface SanityVariant {
-  _id?: string;
-  name?: LocalizedField;
-  sku?: string;
-  code?: string;
-  price?: {
-    cents: number;
-  };
-  size?: LocalizedField | {
-    name?: LocalizedField;
-    [key: string]: any;
-  };
-  available?: boolean;
-  description?: string;
-  images?: SanityImage[];
-}
-
-interface SanityProduct {
-  _id?: string;
-  name?: LocalizedField;
-  slug?: string | {
-    [key: string]: {
-      current?: string;
-    };
-  };
-  description?: LocalizedField;
-  reference?: string;
-  images?: SanityImage[];
-  variants?: SanityVariant[];
-  category?: {
-    name?: LocalizedField;
-  };
-}
-
-interface SanityTaxon {
-  name?: LocalizedField;
-  label?: LocalizedField;
-  products?: SanityProduct[];
-}
-
-interface SanityTaxonomy {
-  name?: LocalizedField;
-  label?: LocalizedField;
-  taxons?: SanityTaxon[];
-}
-
-interface SanityCountry {
-  name?: LocalizedField;
-  code?: string;
-  marketId?: string;
-  defaultLocale?: string;
-  image?: {
-    url?: string;
-  };
-  catalog?: {
-    id?: string;
-  };
-}
-
 // Helper function to parse product variants
-const parseVariants = (variants: SanityVariant[] = [], lang = "en_us"): Variant[] => {
+function parseVariants(variants: SanityVariant[] = [], lang = "en_us"): Variant[] {
   if (!variants || !Array.isArray(variants)) return [];
   
   return variants.map(variant => ({
@@ -89,7 +27,7 @@ const parseVariants = (variants: SanityVariant[] = [], lang = "en_us"): Variant[
 };
 
 // Helper function to parse product data
-const parseProduct = (product: SanityProduct | null): Product | null => {
+function parseProduct(product: SanityProduct | null): Product | null {
   if (!product) return null;
 
   // Prepare images
@@ -132,10 +70,10 @@ const parseProduct = (product: SanityProduct | null): Product | null => {
   return parsedProduct;
 };
 
-const parsingVariant = (
+function parsingVariant(
   variants: SanityVariant[],
   lang = "en_us"
-): Variant[] => {
+): Variant[] {
   return !_.isEmpty(variants)
     ? variants.map((variant) => {
         // Safely handle name (could be string or object)
@@ -170,10 +108,10 @@ const parsingVariant = (
     : [];
 };
 
-const parsingProduct = (
+function parsingProduct(
   products: SanityProduct[] | SanityProduct,
   lang = "en_us"
-): Product[] | Product => {
+): Product[] | Product {
   return Array.isArray(products)
     ? products.map((product) => {
         const localization: Product = {
@@ -202,7 +140,7 @@ const parsingProduct = (
       };
 };
 
-const parsingTaxon = (taxons: SanityTaxon[], lang = "en_us"): Taxon[] => {
+function parsingTaxon(taxons: SanityTaxon[], lang = "en_us"): Taxon[] {
   return taxons.map((taxon) => {
     const localization = {
       name: typeof taxon.name === 'string' ? taxon.name : (taxon.name?.[lang] || ""),
@@ -218,10 +156,10 @@ const parsingTaxon = (taxons: SanityTaxon[], lang = "en_us"): Taxon[] => {
   });
 };
 
-const parsingTaxonomies = (
+function parsingTaxonomies(
   taxonomies: SanityTaxonomy[],
   locale = "en-US"
-): Taxonomy[] => {
+): Taxonomy[] {
   const lang = parseLocale(locale, "_", "-", "lowercase");
   const items = taxonomies.map((taxonomy) => {
     const localization = {

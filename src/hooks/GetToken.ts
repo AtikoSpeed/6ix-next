@@ -2,14 +2,11 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { authenticate } from "@commercelayer/js-auth";
 import { parseEndpoint } from "@/utils/parser";
+import { UseGetToken } from "@/typings/commerce";
 
 const clEndpoint = process.env.NEXT_PUBLIC_CL_ENDPOINT as string;
 const clientId = process.env.NEXT_PUBLIC_CL_CLIENT_ID as string;
 const slug = parseEndpoint(clEndpoint);
-
-type UseGetToken = {
-  (args: { scope: string; countryCode: string }): string;
-};
 
 export const useGetToken: UseGetToken = ({ scope, countryCode }) => {
   const [token, setToken] = useState("");
@@ -29,14 +26,14 @@ export const useGetToken: UseGetToken = ({ scope, countryCode }) => {
         });
         setToken(auth?.accessToken);
         Cookies.set(`clAccessToken-${countryCode}`, auth?.accessToken, {
-          // @ts-ignore
-          expires: auth?.expires,
+          expires: 1,
         });
       };
       getToken();
-    } else {
-      setToken(getCookieToken || "");
+    } else if (getCookieToken && getCookieToken !== "undefined") {
+      setToken(getCookieToken);
     }
   }, [scope, countryCode]);
+
   return token;
 };
