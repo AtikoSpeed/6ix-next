@@ -1,59 +1,53 @@
 /**
  * Commerce Layer Product Utilities
- * 
- * This file contains utility functions related to Commerce Layer products
+ * Optimized utility functions for Commerce Layer product operations
+ * These functions work in both server and client components
  */
 
 /**
  * Format a SKU code with the appropriate size suffix for Commerce Layer
  * 
- * @param {string} skuCode - The base SKU code from Sanity
- * @param {string} size - Optional size code (e.g., "S", "M", "L", "XL", "XXL", "XXXL")
- * @returns {string} Properly formatted SKU code for Commerce Layer
+ * @param {string} skuCode - Base SKU code 
+ * @param {string|null} size - Optional size code (e.g., "S", "M", "L")
+ * @returns {string} Formatted SKU code for Commerce Layer
  */
 export function formatSkuWithSize(skuCode, size) {
   if (!skuCode) return '';
   
-  // Format size suffix based on Commerce Layer conventions
-  let sizeSuffix = 'XXXX'; // Default for one-size-fits-all products
-
-  if (size && size !== 'One Size') {
-    // Handle specific sizes following the pattern observed
-    switch(size.toUpperCase()) {
-      case 'XS':
-        sizeSuffix = 'XSXX';
-        break;
-      case 'S':
-        sizeSuffix = 'SXXX';
-        break;
-      case 'M':
-        sizeSuffix = 'MXXX';
-        break;
-      case 'L':
-        sizeSuffix = 'LXXX';
-        break;
-      case 'XL':
-        sizeSuffix = 'XLXX';
-        break;
-      case 'XXL':
-        sizeSuffix = 'XXLX';
-        break;
-      case 'XXXL':
-        sizeSuffix = 'XXXL';
-        break;
-      default:
-        // Default to XXXX for unknown sizes
-        sizeSuffix = 'XXXX';
+  // Size mapping for standardization
+  const sizeMap = {
+    'XS': 'XSXX',
+    'S': 'SXXX',
+    'M': 'MXXX',
+    'L': 'LXXX',
+    'XL': 'XLXX',
+    'XXL': 'XXLX',
+    'XXXL': 'XXXL',
+    'ONE SIZE': 'XXXX',
+    'ONE-SIZE': 'XXXX',
+    'DEFAULT': 'XXXX'
+  };
+  
+  // Determine the size suffix
+  let sizeSuffix = 'XXXX'; // Default
+  
+  if (size) {
+    const normalizedSize = size.toUpperCase().trim();
+    sizeSuffix = sizeMap[normalizedSize] || sizeMap.DEFAULT;
+  }
+  
+  // Common size suffixes used in Commerce Layer
+  const sizeSuffixes = ['XXXX', 'SXXX', 'MXXX', 'LXXX', 'XSXX', 'XLXX', 'XXLX', 'XXXL'];
+  
+  // Remove any existing size suffix if present
+  let baseSkuWithoutSize = skuCode;
+  
+  for (const suffix of sizeSuffixes) {
+    if (skuCode.endsWith(suffix)) {
+      baseSkuWithoutSize = skuCode.slice(0, -4);
+      break;
     }
   }
-
-  // Remove any existing size suffix if present (assuming it's always 4 chars at the end)
-  const baseSkuWithoutSize = skuCode.endsWith('XXXX') || skuCode.endsWith('SXXX') || 
-                             skuCode.endsWith('MXXX') || skuCode.endsWith('LXXX') || 
-                             skuCode.endsWith('XSXX') || skuCode.endsWith('XLXX') ||
-                             skuCode.endsWith('XXLX') || skuCode.endsWith('XXXL')
-    ? skuCode.slice(0, -4)
-    : skuCode;
   
   return `${baseSkuWithoutSize}${sizeSuffix}`;
 }
