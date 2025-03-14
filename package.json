@@ -1,6 +1,6 @@
 {
   "name": "6ixarchive",
-  "version": "0.6",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 45000",
