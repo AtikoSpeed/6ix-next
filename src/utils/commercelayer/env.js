@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * Environment variable configuration for Next.js
  * This file centralizes environment variable access
