@@ -32,6 +32,7 @@
     "@codemirror/lint": "^6.8.4",
     "@codemirror/theme-one-dark": "^6.1.2",
     "@eslint/eslintrc": "^3.3.0",
+    "@types/lodash": "^4.17.16",
     "@eslint/js": "^9.22.0",
     "@sanity/icons": "^3.7.0",
     "@sanity/types": "^3.79.0",
