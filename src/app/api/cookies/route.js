@@ -8,20 +8,19 @@ import { cookies } from 'next/headers';
 export async function POST(request) {
   try {
     const data = await request.json();
-    const { token } = data;
+    const { name, value, options } = data;
     
-    if (!token) {
-      return Response.json({ success: false, message: 'Missing token' }, { status: 400 });
+    if (!name || !value) {
+      return Response.json({ success: false, message: 'Missing required parameters' }, { status: 400 });
     }
     
     // Set the cookie using the cookies API
     const cookieStore = await cookies();
-    cookieStore.set('cl_token', token, {
+    cookieStore.set(name, value, {
       httpOnly: true,
       // eslint-disable-next-line no-undef
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 3600, // 1 hour
-      path: '/'
+      ...options
     });
     
     return Response.json({ success: true });
