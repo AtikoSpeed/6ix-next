@@ -1,20 +1,9 @@
-/* eslint-disable no-undef */
-import { createClient } from 'next-sanity';
+/**
+ * Commerce Layer Product Data Access Layer
+ * Optimized integration with Sanity for product retrieval
+ */
 
-// For server components, use direct access to environment variables
-// Next.js automatically loads .env.local file in server components
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '';
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
-const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || '2023-05-03';
-const isProduction = process.env.NODE_ENV === 'production';
-
-// Initialize Sanity client
-const client = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  useCdn: isProduction,
-});
+import { client } from '../sanity/client';
 
 /**
  * Fetches all products from Sanity
@@ -39,7 +28,9 @@ export async function getAllProducts() {
   }`;
 
   try {
-    const products = await client.fetch(query);
+    const products = await client.fetch(query, {}, {
+      cache: 'no-store' // Ensures fresh data on each request
+    });
     return products;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -53,6 +44,11 @@ export async function getAllProducts() {
  * @returns {Promise<Object|null>} Product object or null if not found
  */
 export async function getProductBySlug(slug) {
+  if (!slug) {
+    console.error('Product slug is required');
+    return null;
+  }
+  
   const query = `*[_type == "product" && slug.current == $slug][0]{
     _id,
     name,
@@ -71,7 +67,9 @@ export async function getProductBySlug(slug) {
   }`;
 
   try {
-    const product = await client.fetch(query, { slug });
+    const product = await client.fetch(query, { slug }, {
+      cache: 'no-store' // Ensures fresh data on each request
+    });
     return product;
   } catch (error) {
     console.error(`Error fetching product with slug ${slug}:`, error);
