@@ -1,73 +1,72 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { CommerceLayer } from '@commercelayer/react-components';
 
 /**
- * Client Component for Commerce Layer integration
- * Receives token and endpoint from server component
+ * Optimized Client Component for Commerce Layer integration
+ * - Handles client-side Commerce Layer initialization
+ * - Uses the React Context API via Commerce Layer's components
+ * - Prevents re-renders and state updates during render
  */
 export default function CommerceLayerClient({ token, endpoint, children }) {
-  // Track initialization to prevent render loop
+  // Track initialization to prevent infinite render loops
   const initialized = useRef(false);
-  // Optional loading state if needed
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Save token to cookie on client side if needed
+  
+  // Handle token persistence on client
   useEffect(() => {
-    // Only run once when props change
+    // Prevent multiple initializations - only run when props change
     if (!initialized.current && token && endpoint) {
-      initialized.current = true;
+      let isMounted = true;
       
-      // Use an async function to handle any side effects
-      // This prevents state updates during render phase
       const initializeAuth = async () => {
-        setIsLoading(true);
         try {
-          // Optionally save token to cookie on the client side
-          // Only if not already present from server
+          // Check if we need to save token to cookie
           const cookies = document.cookie.split(';');
           const hasTokenCookie = cookies.some(cookie => 
             cookie.trim().startsWith('cl_auth_token='));
           
           if (!hasTokenCookie) {
-            // Make API call to set cookie instead of direct document.cookie
-            // This prevents issues with SameSite cookies
-            await fetch('/api/commerce/token/save', {
+            // Use absolute URLs for API calls as per best practices
+            // Use API route to handle cookie setting (avoids SameSite issues)
+            const origin = window.location.origin;
+            await fetch(`${origin}/api/cookies`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token }),
+              body: JSON.stringify({ 
+                name: 'cl_auth_token', 
+                value: token,
+                options: { maxAge: 3600, path: '/' }
+              }),
               credentials: 'include'
             });
           }
+          
+          // Update ref only if component is still mounted
+          if (isMounted) {
+            initialized.current = true;
+          }
         } catch (error) {
           console.error('Error initializing Commerce Layer auth:', error);
-        } finally {
-          setIsLoading(false);
+          // Still mark as initialized to prevent infinite retries
+          if (isMounted) {
+            initialized.current = true;
+          }
         }
       };
       
-      // Call the async function
       initializeAuth();
+      
+      // Cleanup function
+      return () => {
+        isMounted = false;
+      };
     }
-    
-    // Reset initialization when props change
-    return () => {
-      initialized.current = false;
-    };
   }, [token, endpoint]);
-
-  // If not ready yet, show loading or nothing
-  if (isLoading) {
-    return <div>Initializing Commerce Layer...</div>;
-  }
-
-  // Render Commerce Layer provider with passed props
+  
+  // Render Commerce Layer provider when token and endpoint are available
   return (
-    <CommerceLayer
-      accessToken={token}
-      endpoint={endpoint}
-    >
+    <CommerceLayer accessToken={token} endpoint={endpoint}>
       {children}
     </CommerceLayer>
   );
