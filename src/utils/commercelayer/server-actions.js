@@ -1,14 +1,19 @@
 "use server";
 
+import { getCommerceLayerConfig, CL_AUTH_COOKIE } from './config';
+
+/**
+ * Server Action: Fetch Commerce Layer token
+ * @returns {Promise<{accessToken: string|null, error: string|null}>}
+ */
 export async function getCommerceLayerToken() {
   try {
-    // We need to use an absolute URL from server components
-    // Construct a proper URL with origin
-    // eslint-disable-next-line no-undef
-    const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:45000';
-    const response = await fetch(`${origin}/api/commerce/token`, {
+    // Get app configuration including the origin for absolute URLs
+    const { appUrl } = getCommerceLayerConfig();
+    
+    // Use absolute URL for server component fetch as required
+    const response = await fetch(`${appUrl}/api/commerce/token`, {
       cache: 'no-store' // Ensure we always get a fresh token
-      // Removed conflicting revalidate option
     });
     
     if (!response.ok) {
@@ -28,15 +33,18 @@ export async function getCommerceLayerToken() {
   }
 }
 
+/**
+ * Server Action: Set Commerce Layer token cookie via API route
+ * @param {string} token - The access token to store
+ * @returns {Promise<boolean>} Success status
+ */
 export async function setCommerceLayerTokenCookie(token) {
   if (!token) return false;
   
   try {
-    // We need to use an absolute URL from server components
-    // Construct a proper URL with origin
-    // eslint-disable-next-line no-undef
-    const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:45000';
-    const url = `${origin}/api/cookies`;
+    // Get app URL for absolute path construction
+    const { appUrl } = getCommerceLayerConfig();
+    const url = `${appUrl}/api/cookies`;
     
     // Use the Route Handler to set the cookie
     const response = await fetch(url, {
@@ -44,8 +52,11 @@ export async function setCommerceLayerTokenCookie(token) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ token }),
-      // Ensure we don't use cache
+      body: JSON.stringify({ 
+        name: CL_AUTH_COOKIE, 
+        value: token,
+        options: { maxAge: 86400, path: '/' }
+      }),
       cache: 'no-store',
     });
     
