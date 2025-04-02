@@ -186,17 +186,14 @@ export async function getAllProducts(): Promise<Product[]> {
     },
     "variants": variants[]->{
       _id,
+      code,
       name,
-      sku,
-      size,
-      price,
-      available,
+      size->{ name },
       description,
       "images": images[]->{
         "url": images.asset->url
       }
-    },
-    "category": category->
+    }
   }`;
 
   try {
@@ -211,30 +208,35 @@ export async function getAllProducts(): Promise<Product[]> {
 /**
  * Get a specific product by slug (ID in this case)
  */
-export async function getProductBySlug(id: string): Promise<any | null> {
+export async function getProductBySlug(id: string): Promise<Product | null> {
   if (!id) return null;
 
-  // Updated query to match your Sanity studio structure and include Commerce Layer fields
+  // Fix the query to fetch full product details including variants, code, and size
   const query = groq`*[_type == "product" && _id == $id][0] {
-    "documentId": _id,
-    "attributes": {
-      "name": name.en_us,
-      "description": description.en_us,
-      "itemPic": {
-        "data": {
-          "attributes": {
-            "url": images[0]->images.asset->url
-          }
-        }
-      },
-      "sku": reference,
-      "code": reference
+    _id,
+    name,
+    reference, // Keep reference if used elsewhere, maybe as a top-level SKU?
+    "slug": slug.en_us.current,
+    description,
+    "images": images[]->{
+      "url": images.asset->url
+    },
+    "variants": variants[]->{
+      _id,
+      code, // Essential for Commerce Layer SKU
+      name, // Variant name (e.g., color)
+      size->{ name }, // Fetch linked size name
+      description,
+      "images": images[]->{
+        "url": images.asset->url
+      }
     }
   }`;
 
   try {
-    const product = await client.fetch(query, { id });
-    return product;
+    const product = await client.fetch<SanityProduct>(query, { id });
+    // Use the existing parser function for consistency
+    return parseProduct(product); 
   } catch (error) {
     console.error(`Error fetching product with ID ${id}:`, error);
     return null;
@@ -247,19 +249,23 @@ export async function getProductBySlug(id: string): Promise<any | null> {
 export async function getProductsByCategory(category: string): Promise<any[]> {
   if (!category) return [];
 
-  // Updated query to match your Sanity studio structure
-  const query = groq`*[_type == "taxon" && name.en_us==$category] {
+  // Updated query to fetch variants and their codes (SKUs)
+  const query = groq`*[_type == "taxon" && name.en_us==$category][0] {
     "items": products[]-> {
-      "documentId": _id,
-      "attributes": {
-        "name": name.en_us,
-        "description": description.en_us,
-        "itemPic": {
-          "data": {
-            "attributes": {
-              "url": images[0]->images.asset->url
-            }
-          }
+      _id,
+      name,
+      "slug": slug.en_us.current,
+      description,
+      "images": images[]->{      
+        "url": images.asset->url
+      },
+      "variants": variants[]->{      
+        _id,
+        code,
+        name,
+        size->{ name },
+        "images": images[]->{        
+          "url": images.asset->url
         }
       }
     }
@@ -267,8 +273,8 @@ export async function getProductsByCategory(category: string): Promise<any[]> {
 
   try {
     const result = await client.fetch(query, { category });
-    // Extract all products from the 'items' array in the first taxon
-    return result && result.length > 0 ? result[0].items || [] : [];
+    // Extract products from the 'items' array within the taxon object
+    return result?.items || []; 
   } catch (error) {
     console.error(`Error fetching products for category ${category}:`, error);
     return [];

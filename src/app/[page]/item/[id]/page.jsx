@@ -1,53 +1,54 @@
-"use server";
+import React, { Suspense } from 'react';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { getProductBySlug } from '@/utils/sanity/api';
+import ProductInteractiveElements from '@/components/ProductInteractiveElements';
 
-import { getProductBySlug } from '@/utils/sanity/api.ts';
-import ProductDetail from '@/components/commercelayer/ProductDetail';
-import Link from 'next/link';
-import { ArrowLeftIcon } from '@/components/icons/ArrowLeft';
-
-// Metadata for the page
-export async function generateMetadata({ params }) {
-  const resolvedParams = await Promise.resolve(params);
-  const product = await getProductBySlug(resolvedParams.id);
-  
-  if (!product) {
-    return {
-      title: 'Product Not Found',
-    };
-  }
-  
-  return {
-    title: `${product.name} | 6ixarchive`,
-    description: product.description,
-  };
-}
-
-// Product detail page
 export default async function ItemPage({ params }) {
-  // Await params to fix the Next.js error
-  const resolvedParams = await params;
-  const { page, id } = resolvedParams;
-  
-  const product = await getProductBySlug(id);
-  
-  if (!product) {
-    return (
-      <div className="container mx-auto py-20 text-center">
-        <h1 className="text-3xl font-bold mb-8">Product Not Found</h1>
-        <p>The product you are looking for does not exist.</p>
-      </div>
-    );
+  const { id } = await params; 
+
+  const productData = await getProductBySlug(id); 
+
+  if (!productData) {
+    notFound();
   }
-  
+
+  // Destructure for easier access
+  const { name, description, images, variants } = productData;
+
   return (
-    <div className="container mx-auto py-12 px-4">
-      <div className="mb-8">
-        <Link href={`/${page}`} className="inline-flex items-center text-gray-600 hover:text-gray-900">
-          <ArrowLeftIcon className="w-4 h-4 mr-2" />
-          Back to {page}
-        </Link>
+    <Suspense fallback={<div>Loading product details...</div>}>
+      <div className="container mx-auto py-8 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Image Gallery (Server Rendered) */}
+          <div>
+            {images?.[0]?.url && (
+              <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4">
+                <Image
+                  src={images[0].url}
+                  alt={name || 'Product Image'}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-center"
+                  priority
+                />
+              </div>
+            )}
+            {/* TODO: Add thumbnails for multiple images */}
+          </div>
+
+          {/* Product Info (Partially Server Rendered) */}
+          <div>
+            <h1 className="text-3xl font-bold mb-2">{name}</h1>
+            
+            {/* Interactive Elements (Client Rendered) */}
+            <ProductInteractiveElements 
+              variants={variants} 
+              description={description} 
+            />
+          </div>
+        </div>
       </div>
-      <ProductDetail product={product} />
-    </div>
+    </Suspense>
   );
 }

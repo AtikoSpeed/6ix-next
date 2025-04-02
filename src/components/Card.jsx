@@ -1,32 +1,26 @@
-"use server";
+'use client';
 
 import Image from "next/image";
 import Link from "next/link";
+import { Price, Skus } from "@commercelayer/react-components";
 
-export default async function Card({ props, category }) {
-  if (!props) return null;
+export default function Card({ product, page }) { 
+  if (!product) return null;
 
-  // Extract product information from your specific Sanity schema structure
-  const documentId = props.documentId;
-  const product = props.attributes || {};
-  
-  // Get product name
-  const name = product.name || '';
-  
-  // Get product slug/id for the link
-  const productId = documentId || '';
-  
-  // Get the image URL based on your schema structure
+  const name = product.name?.en_us || product.name || ''; 
+  const productId = product._id; 
+
   let imageUrl = '/placeholder.jpg';
-  if (product.itemPic?.data?.attributes?.url) {
-    imageUrl = product.itemPic.data.attributes.url;
+  if (product.images && product.images.length > 0 && product.images[0]?.url) {
+    imageUrl = product.images[0].url;
   }
 
-  // Use provided category or default to menswear
-  const page = category || 'menswear';
+  const firstSkuCode = product.variants && product.variants.length > 0 ? product.variants[0]?.code : null;
+
+  const itemLink = `/${page}/item/${productId}`; 
 
   return (
-    <Link href={`/${page}/item/${productId}`} className="group">
+    <Link href={itemLink} className="group">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4">
         <Image
           src={imageUrl}
@@ -37,7 +31,14 @@ export default async function Card({ props, category }) {
         />
       </div>
       <div>
-        <h3 className="text-lg font-medium">{name}</h3>
+        <h3 className="text-lg font-medium mb-1">{name}</h3>
+        {firstSkuCode ? (
+          <Skus codes={[firstSkuCode]}>
+            <Price className="text-md text-gray-700" />
+          </Skus>
+        ) : (
+          <p className="text-md text-gray-500">Price unavailable</p> 
+        )}
       </div>
     </Link>
   );

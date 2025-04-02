@@ -1,70 +1,47 @@
-"use server";
+'use server';
 
-import { cookies } from 'next/headers';
-import { getCommerceLayerToken } from '@/utils/commercelayer/server-actions';
-import CommerceLayerClient from './CommerceLayerClient';
+import React from 'react';
+import CommerceLayerClient from './CommerceLayerClient'; 
+import { getServerAccessToken } from '@/utils/commercelayer/server-auth'; 
+import { getCommerceLayerConfig } from '@/utils/commercelayer/config'; 
 
 /**
- * Optimized Commerce Layer Provider - Server Component
- * This combines the Provider and ServerWrapper functionality into a single component
- * - Fetches token server-side
- * - Handles error states
- * - Passes token and endpoint to client component
+ * Server Component: Fetches the Commerce Layer token server-side
+ * and renders the CommerceLayerClient component with the token and endpoint.
  */
 export default async function CLProvider({ children }) {
-  let token = null;
+  let accessToken = null;
   let errorMessage = null;
-  
-  // Get Commerce Layer endpoint from env
-  /* eslint-disable-next-line no-undef */
-  const endpoint = process.env.NEXT_PUBLIC_CL_ENDPOINT;
-  
+  const { endpoint } = getCommerceLayerConfig();
+
+  if (!endpoint) {
+    errorMessage = "Commerce Layer endpoint is not configured.";
+    console.error("[CLProvider Server]", errorMessage);
+    // Render children without provider if endpoint is missing
+    return <>{children}</>; 
+  }
+
   try {
-    // Always use await with cookies() as required
-    const cookieStore = await cookies();
-    
-    // Try to get token from cookie first
-    const cookieToken = cookieStore.get('cl_auth_token')?.value;
-    
-    if (cookieToken) {
-      // Use existing token from cookie
-      token = cookieToken;
+    accessToken = await getServerAccessToken();
+    if (!accessToken) {
+      errorMessage = "[CLProvider Server] Failed to retrieve access token (token is null/undefined).";
+      console.error(errorMessage);
+      // Still render client, but explicitly pass null token
+      accessToken = null; 
     } else {
-      // Fetch new token via server action
-      const { accessToken, error } = await getCommerceLayerToken();
-      
-      if (accessToken) {
-        token = accessToken;
-      } else {
-        errorMessage = error || 'Failed to fetch Commerce Layer token';
-      }
+      console.log("[CLProvider Server] Successfully fetched access token.");
     }
   } catch (error) {
-    errorMessage = error.message || 'Error setting up Commerce Layer';
-    console.error('Commerce Layer provider error:', error);
+    errorMessage = `[CLProvider Server] Error fetching Commerce Layer token: ${error.message}`;
+    console.error(errorMessage);
+    accessToken = null; 
   }
-  
-  // Handle error states
-  if (!endpoint) {
-    console.error('Commerce Layer endpoint not configured in environment variables');
-    return <div>Commerce Layer configuration error: Missing endpoint</div>;
-  }
-  
-  if (errorMessage) {
-    console.error('Commerce Layer error:', errorMessage);
-    return <div>Commerce Layer error: {errorMessage}</div>;
-  }
-  
-  if (!token) {
-    return <div>Initializing Commerce Layer...</div>;
-  }
-  
-  // Pass token and endpoint to client component
+
+  console.log("[CLProvider Server] Rendering Client with:", { endpoint, hasToken: !!accessToken });
+
+  // Render the Client Component, passing the token (or null) and endpoint
   return (
-    <CommerceLayerClient 
-      token={token} 
-      endpoint={endpoint}
-    >
+    <CommerceLayerClient accessToken={accessToken} endpoint={endpoint}>
       {children}
     </CommerceLayerClient>
   );
