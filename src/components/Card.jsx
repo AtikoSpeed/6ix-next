@@ -1,27 +1,44 @@
-import Image from "next/image";
+"use server";
 
-export default function Card({ props }) {
+import Image from "next/image";
+import Link from "next/link";
+
+export default async function Card({ props, category }) {
+  if (!props) return null;
+
+  // Extract product information from your specific Sanity schema structure
+  const documentId = props.documentId;
+  const product = props.attributes || {};
+  
+  // Get product name
+  const name = product.name || '';
+  
+  // Get product slug/id for the link
+  const productId = documentId || '';
+  
+  // Get the image URL based on your schema structure
+  let imageUrl = '/placeholder.jpg';
+  if (product.itemPic?.data?.attributes?.url) {
+    imageUrl = product.itemPic.data.attributes.url;
+  }
+
+  // Use provided category or default to menswear
+  const page = category || 'menswear';
+
   return (
-    <div className="card grid grid-cols-1 bg-base-100 shadow-xl h-min lg:h-full">
-      <figure className="relative self-start">
+    <Link href={`/${page}/item/${productId}`} className="group">
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4">
         <Image
-          src={`${props.itemPic.data.attributes.url}`}
-          alt="Clothing item"
-          width={100}
-          height={100}
-          sizes="80vh"
-          className="w-full h-auto"
+          src={imageUrl}
+          alt={name}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover object-center transition-all duration-300 group-hover:scale-105"
         />
-      </figure>
-      <div className="card-body self-end">
-        <h2 className="card-title">{props.brand}</h2>
-        {props.seasonyear && <p>{props.seasonyear}</p>}
-        <p>{props.name}</p>
-        <p>{`€ ${props.itemPrice || "Gratis"}`}</p>
-        {/* <div className="card-actions justify-end"> */}
-        {/* <button className="btn btn-primary">Buy Now</button> */}
-        {/* </div> */}
       </div>
-    </div>
+      <div>
+        <h3 className="text-lg font-medium">{name}</h3>
+      </div>
+    </Link>
   );
 }

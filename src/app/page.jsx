@@ -1,7 +1,9 @@
+"use server";
+
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default async function Home() {
   return (
     <nav className="grid grid-cols-1 md:grid-cols-2 h-screen w-screen">
       <Link

@@ -1,3 +1,5 @@
+"use server";
+
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 // import ThemeToggle from "@/components/ThemeToggle";

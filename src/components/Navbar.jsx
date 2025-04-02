@@ -1,5 +1,7 @@
+"use server";
+
 import Image from "next/image";
-export default function Navbar({ props }) {
+export default async function Navbar({ props }) {
   return (
     <nav className="navbar bg-base-100 sticky lg:w-[calc(100vw-13rem)] z-10 p-2 pt-0 sm:p-4">
       <div className="flex-1">

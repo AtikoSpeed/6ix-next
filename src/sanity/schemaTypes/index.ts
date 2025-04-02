@@ -8,6 +8,9 @@ import taxonomy from "./documents/taxonomy";
 import variant from "./documents/variant";
 import productImage from "./documents/productImage";
 import product from "./documents/product";
+import homepage from "./documents/homepage";
+import singleResourceBlock from "./documents/singleResourceBlock";
+import post from "./documents/post";
 
 import localeString from "./locale/String";
 import localeText from "./locale/Text";
@@ -29,5 +32,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     localeText,
     localeSlug,
     localeBlockContent,
+    homepage,
+    singleResourceBlock,
+    post,
   ],
 };
