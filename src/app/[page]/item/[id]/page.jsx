@@ -1,10 +1,20 @@
 "use server";
 
+import { getProductBySlug } from "@/utils/sanity/api.ts";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@/components/icons/ArrowLeft";
 
 // Metadata for the page
 export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
+  const product = await getProductBySlug(resolvedParams.id);
+
+  if (!product) {
+    return {
+      title: "Product Not Found",
+    };
+  }
+
   return {
     title: `${product.name} | 6ixarchive`,
     description: product.description,
