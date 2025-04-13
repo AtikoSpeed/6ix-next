@@ -1,23 +1,20 @@
-'use client';
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { Price, Skus } from "@commercelayer/react-components";
 
-export default function Card({ product, page }) { 
+export default function Card({ product, page }) {
   if (!product) return null;
 
-  const name = product.name?.en_us || product.name || ''; 
-  const productId = product._id; 
+  const name = product.name?.en_us || product.name || "";
+  const productId = product._id;
 
-  let imageUrl = '/placeholder.jpg';
+  let imageUrl = "/placeholder.jpg";
   if (product.images && product.images.length > 0 && product.images[0]?.url) {
     imageUrl = product.images[0].url;
   }
 
-  const firstSkuCode = product.variants && product.variants.length > 0 ? product.variants[0]?.code : null;
-
-  const itemLink = `/${page}/item/${productId}`; 
+  const itemLink = `/${page}/item/${productId}`;
 
   return (
     <Link href={itemLink} className="group">
@@ -32,13 +29,6 @@ export default function Card({ product, page }) {
       </div>
       <div>
         <h3 className="text-lg font-medium mb-1">{name}</h3>
-        {firstSkuCode ? (
-          <Skus codes={[firstSkuCode]}>
-            <Price className="text-md text-gray-700" />
-          </Skus>
-        ) : (
-          <p className="text-md text-gray-500">Price unavailable</p> 
-        )}
       </div>
     </Link>
   );
