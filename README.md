@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 6ixarchive - Modern E-commerce Platform
 
-## Getting Started
+![6ixarchive Logo](/public/logo.svg)
 
-First, run the development server:
+## 📝 Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+6ixarchive is a high-performance, modern e-commerce platform built with Next.js 15 and integrated with Sanity CMS. The platform offers a seamless shopping experience with a focus on fashion items, organized by designers, collections, and categories.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Key Features
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Responsive Design** - Optimized for all device sizes
+- **Dark/Light Mode** - Theme toggle for user preference
+- **Content Management** - Full Sanity CMS integration for easy product management
+- **Dynamic Product Pages** - Individual detail pages for each product
+- **Filtering System** - Filter products by brand, designer, size, color, and more
+- **Product Collections** - Organized by seasons, designers, and categories
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Technologies
 
-## Learn More
+### Frontend
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 15.3.0** - React framework with server-side rendering
+- **React 19.1.0** - Component-based UI library
+- **Tailwind CSS 4.1.3** - Utility-first CSS framework
+- **DaisyUI** - Component library for Tailwind CSS
+- **SASS** - CSS preprocessor for custom styling
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Backend & CMS
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Sanity 3.84.0** - Headless CMS for product management
+- **next-sanity 9.10.2** - Integration layer between Next.js and Sanity
 
-## Deploy on Vercel
+### Development Tools
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **TypeScript 5.8.3** - Type safety and developer experience
+- **ESLint 9.24.0** - Code quality and consistency
+- **Turbopack** - Fast refresh and bundling
+<!--
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🖼️ Screenshots
+
+[Add your screenshots here] -->
+
+## 📂 Project Structure
+
+- `/src/app` - Next.js application routes
+- `/src/components` - Reusable UI components
+- `/src/sanity` - Sanity CMS configuration and schemas
+- `/src/styles` - Global styles and layout
+
+## 🧠 Future Improvements
+
+- User authentication and profiles
+- Shopping cart functionality
+- Payment processing integration
+- Advanced search capabilities
+- Wishlist functionality
+
+## 👤 Author
+
+AtikoSpeed
+
+---
+
+Built with ❤️ and modern web technologies.
