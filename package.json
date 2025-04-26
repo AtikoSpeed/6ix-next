@@ -11,10 +11,10 @@
   "dependencies": {
     "@sanity/client": "6.29.1",
     "@sanity/icons": "3.7.0",
-    "@sanity/image-url": "1",
+    "@sanity/image-url": "^1.1.0",
     "@sanity/types": "3.86.1",
     "@sanity/ui": "2.15.13",
-    "@sanity/vision": "3",
+    "@sanity/vision": "^3.86.1",
     "lodash": "^4.17.21",
     "next": "15.3.1",
     "next-sanity": "9.10.2",
@@ -23,7 +23,7 @@
     "react-icons": "^5.5.0",
     "react-is": "^19.1.0",
     "sanity": "3.86.1",
-    "styled-components": "6.1",
+    "styled-components": "~6.1.17",
     "tailwind-merge": "^3.2.0",
     "tailwindcss-animate": "^1.0.7",
     "ts-node": "^10.9.2"
